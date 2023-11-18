@@ -8,6 +8,11 @@ from sklearn.metrics import accuracy_score
 np.random.seed(52)
 
 
+def create_bootstrap(bx, by):
+    mask = np.random.choice(bx.shape[0], bx.shape[0], replace=True)
+    return bx[mask], by[mask]
+
+
 def convert_embarked(x):
     if x == 'S':
         return 0
@@ -42,3 +47,5 @@ if __name__ == '__main__':
     prediction = tree.predict(X_val)
     accuracy = accuracy_score(y_val, prediction)
     print(round(accuracy, 3))
+    X_bt, y_bt = create_bootstrap(X_train, y_train)
+    print(list(y_bt[:10]))
