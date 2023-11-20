@@ -26,9 +26,11 @@ class RandomForestClassifier:
         self.is_fit = True
         return self
 
-    def predict(self):
+    def predict(self, X_pred):
         if not self.fit:
             raise AttributeError('The forest is not fit yet! Consider calling .fit() method.')
+        predictions = pd.DataFrame([tree.predict(X_pred) for tree in self.forest])
+        return predictions.mode(axis=0).values[0]
 
     @staticmethod
     def create_bootstrap(bx, by):
@@ -49,8 +51,10 @@ if __name__ == '__main__':
     X['Sex'] = X['Sex'].apply(lambda x: 0 if x == 'male' else 1)
     X['Embarked'].replace({'S': 0, 'C': 1, 'Q': 2}, inplace=True)
 
-    X_train, X_val, y_train, y_val = train_test_split(X.values, y.values, stratify=y, train_size=0.8)
+    X_train, X_val, y_train, y_val = train_test_split(X.values, y.values, stratify=y,
+                                                      train_size=0.8, random_state=52)
 
     forest = RandomForestClassifier().fit(X_train, y_train)
-    prediction = forest.forest[0].predict(X_val)
+    prediction = forest.predict(X_val)
     print(round(accuracy_score(y_val, prediction), 3))
+    print(list(prediction[:10]))
