@@ -33,8 +33,8 @@ class RandomForestClassifier:
         return predictions.mode(axis=0).values[0]
 
     @staticmethod
-    def create_bootstrap(bx, by):
-        mask = np.random.choice(bx.shape[0], bx.shape[0], replace=True)
+    def create_bootstrap(bx, by, size=1.0):
+        mask = np.random.choice(bx.shape[0], int(bx.shape[0] * size), replace=True)
         return bx[mask], by[mask]
 
 
@@ -54,7 +54,6 @@ if __name__ == '__main__':
     X_train, X_val, y_train, y_val = train_test_split(X.values, y.values, stratify=y,
                                                       train_size=0.8, random_state=52)
 
-    forest = RandomForestClassifier().fit(X_train, y_train)
+    forest = RandomForestClassifier(n_trees=300, max_depth=100, min_error=1e-4).fit(X_train, y_train)
     prediction = forest.predict(X_val)
     print(round(accuracy_score(y_val, prediction), 3))
-    print(list(prediction[:10]))
