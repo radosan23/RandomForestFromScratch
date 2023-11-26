@@ -40,12 +40,14 @@ class RandomForestClassifier:
 
 
 def plot_acc(acc):
-    fig, ax = plt.subplots()
-    fig.suptitle('Random forest dependence of accuracy from the number of trees')
-    ax.set_xlabel('number of trees')
-    ax.set_ylabel('model accuracy')
+    fig, ax = plt.subplots(figsize=(8.5, 5))
+    fig.suptitle('Random forest dependence of accuracy from the number of trees', fontsize=15, fontweight='bold')
+    ax.set_xlabel('number of trees', fontsize=14)
+    ax.set_ylabel('model accuracy', fontsize=14)
     ax.plot(np.arange(1, len(acc)+1), acc, '-dg')
-    plt.show()
+    fig.show()
+    plt.waitforbuttonpress()
+    plt.close(fig)
 
 
 if __name__ == '__main__':
@@ -66,8 +68,8 @@ if __name__ == '__main__':
 
     accuracy = []
     for n in trange(1, 601):
-        forest = RandomForestClassifier(n_trees=n).fit(X_train, y_train)
+        forest = RandomForestClassifier(n_trees=n, max_depth=100, min_error=1e-4).fit(X_train, y_train)
         prediction = forest.predict(X_val)
         accuracy.append(round(accuracy_score(y_val, prediction), 3))
-    print(accuracy[:20])
-    # plot_acc(accuracy)
+    print(accuracy[::50])
+    plot_acc(accuracy)
